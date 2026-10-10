@@ -1,0 +1,11 @@
+# Credenciais — NUNCA commitar
+.env
+
+# Ambiente Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs locais
+*.log
