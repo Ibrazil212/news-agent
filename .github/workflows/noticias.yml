@@ -1,0 +1,38 @@
+name: Relatório Diário de Notícias
+
+on:
+  schedule:
+    # Roda às 10h30 UTC = 07h30 em Brasília (UTC-3, sem horário de verão)
+    - cron: '30 10 * * *'
+
+  # Permite disparar manualmente pelo painel do GitHub Actions
+  workflow_dispatch:
+
+jobs:
+  executar-agente:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30   # segurança: cancela se demorar mais que 30 min
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar agente de notícias
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: "587"
+        run: python agent.py
